@@ -34,14 +34,17 @@ function listAdapterFiles(rootPath: string, config: Config): string[] {
     return files.filter((filePath) => fsUtils.exists(filePath));
 }
 
-function listCanonicalFiles(rootPath: string): string[] {
+function listCanonicalFiles(rootPath: string, config: Config): string[] {
+    const activeDir = config.tasks?.activeDir ?? 'active';
+    const doneDir = config.tasks?.doneDir ?? 'done';
+
     return [
         path.join(rootPath, 'ai', 'config.yml'),
         ...fsUtils.listFiles(path.join(rootPath, 'ai', 'instructions')).filter((file) => file.endsWith('.instructions.md')),
         ...fsUtils.listFiles(path.join(rootPath, 'ai', 'agents')).filter((file) => file.endsWith('.agent.md')),
         ...fsUtils.listFiles(path.join(rootPath, 'ai', 'skills')).filter((file) => file.endsWith('.skill.md')),
-        ...fsUtils.listFiles(path.join(rootPath, 'ai', 'tasks', 'active')).filter((file) => file.endsWith('.task.md')),
-        ...fsUtils.listFiles(path.join(rootPath, 'ai', 'tasks', 'done')).filter((file) => file.endsWith('.task.md')),
+        ...fsUtils.listFiles(path.join(rootPath, 'ai', 'tasks', activeDir)).filter((file) => file.endsWith('.task.md')),
+        ...fsUtils.listFiles(path.join(rootPath, 'ai', 'tasks', doneDir)).filter((file) => file.endsWith('.task.md')),
     ].filter((filePath) => fsUtils.exists(filePath));
 }
 
@@ -70,7 +73,7 @@ export function readSyncState(rootPath: string): SyncState | null {
 export function validateSyncStatus(rootPath: string, config: Config): ValidationIssue[] {
     const issues: ValidationIssue[] = [];
     const adapterFiles = listAdapterFiles(rootPath, config);
-    const canonicalFiles = listCanonicalFiles(rootPath);
+    const canonicalFiles = listCanonicalFiles(rootPath, config);
 
     const enabledAdapters = [
         config.adapters.copilot.enabled ? '.github/' : null,

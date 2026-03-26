@@ -7,7 +7,7 @@ This is a **{{projectProfile.framework}}** project written in **TypeScript**.
 This is a **{{projectProfile.framework}}** project written in **{{projectProfile.language}}**.
 {{/if-includes}}
 {{#if projectProfile.monorepo}}
-This is a **monorepo** managed with {{projectProfile.monorepoTool}}.
+This is a **monorepo**.
 {{/if}}
 
 ## Language Standards

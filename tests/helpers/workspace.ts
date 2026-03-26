@@ -34,6 +34,9 @@ export function writeConfig(
         claude?: boolean;
         cursor?: boolean;
         autoSync?: boolean;
+        idPrefix?: string;
+        activeDir?: string;
+        doneDir?: string;
     } = {},
 ): void {
     const content = `version: 1
@@ -57,9 +60,9 @@ sync:
   autoSync: ${options.autoSync ?? false}
   warnManualEdits: true
 tasks:
-  idPrefix: TASK-
-  activeDir: active
-  doneDir: done
+    idPrefix: ${options.idPrefix ?? 'TASK-'}
+    activeDir: ${options.activeDir ?? 'active'}
+    doneDir: ${options.doneDir ?? 'done'}
 language: en
 `;
     writeFile(root, 'ai/config.yml', content);
