@@ -25,78 +25,115 @@ interface TemplateEntry {
 
 const templates: Map<string, TemplateEntry> = new Map([
   // Instruction templates
-  ['architecture', {
-    type: 'instruction',
-    name: 'architecture',
-    template: architectureTemplate,
-    description: 'Architecture and design patterns',
-  }],
-  ['style', {
-    type: 'instruction',
-    name: 'style',
-    template: styleTemplate,
-    description: 'Code style and conventions',
-  }],
-  ['testing', {
-    type: 'instruction',
-    name: 'testing',
-    template: testingTemplate,
-    description: 'Testing strategies and best practices',
-  }],
-  ['security', {
-    type: 'instruction',
-    name: 'security',
-    template: securityTemplate,
-    description: 'Security guidelines',
-  }],
-  ['deploy', {
-    type: 'instruction',
-    name: 'deploy',
-    template: deployTemplate,
-    description: 'Deployment procedures',
-  }],
+  [
+    'architecture',
+    {
+      type: 'instruction',
+      name: 'architecture',
+      template: architectureTemplate,
+      description: 'Project structure, modules, naming conventions, imports',
+    },
+  ],
+  [
+    'style',
+    {
+      type: 'instruction',
+      name: 'style',
+      template: styleTemplate,
+      description: 'Code formatting, framework patterns, component conventions',
+    },
+  ],
+  [
+    'testing',
+    {
+      type: 'instruction',
+      name: 'testing',
+      template: testingTemplate,
+      description: 'Test stack, patterns, coverage, component testing',
+    },
+  ],
+  [
+    'security',
+    {
+      type: 'instruction',
+      name: 'security',
+      template: securityTemplate,
+      description: 'Input validation, secrets handling, safe code patterns',
+    },
+  ],
+  [
+    'deploy',
+    {
+      type: 'instruction',
+      name: 'deploy',
+      template: deployTemplate,
+      description: 'Branch strategy, CI/CD, commit conventions, environment constraints',
+    },
+  ],
   // Agent templates
-  ['code-generator', {
-    type: 'agent',
-    name: 'code-generator',
-    template: codeGeneratorTemplate,
-    description: 'Generates code following project instructions',
-  }],
-  ['code-reviewer', {
-    type: 'agent',
-    name: 'code-reviewer',
-    template: codeReviewerTemplate,
-    description: 'Reviews code against instructions',
-  }],
-  ['task-planner', {
-    type: 'agent',
-    name: 'task-planner',
-    template: taskPlannerTemplate,
-    description: 'Breaks features into task files',
-  }],
-  ['bug-fixer', {
-    type: 'agent',
-    name: 'bug-fixer',
-    template: bugFixerTemplate,
-    description: 'Diagnoses and fixes bugs',
-  }],
+  [
+    'code-generator',
+    {
+      type: 'agent',
+      name: 'code-generator',
+      template: codeGeneratorTemplate,
+      description: 'Implements tasks step by step with human review between steps',
+    },
+  ],
+  [
+    'code-reviewer',
+    {
+      type: 'agent',
+      name: 'code-reviewer',
+      template: codeReviewerTemplate,
+      description: 'Reviews code against project instructions with severity levels',
+    },
+  ],
+  [
+    'task-planner',
+    {
+      type: 'agent',
+      name: 'task-planner',
+      template: taskPlannerTemplate,
+      description: 'Breaks features and requirements into structured task files',
+    },
+  ],
+  [
+    'bug-fixer',
+    {
+      type: 'agent',
+      name: 'bug-fixer',
+      template: bugFixerTemplate,
+      description: 'Diagnoses root cause then implements minimal fix with regression test',
+    },
+  ],
   // File templates
-  ['task', {
-    type: 'task',
-    name: 'task',
-    template: taskTemplate,
-    description: 'Task file template',
-  }],
-  ['skill', {
-    type: 'skill',
-    name: 'skill',
-    template: skillTemplate,
-    description: 'Skill file template',
-  }],
+  [
+    'task',
+    {
+      type: 'task',
+      name: 'task',
+      template: taskTemplate,
+      description: 'Task file with steps, references, and acceptance criteria',
+    },
+  ],
+  [
+    'skill',
+    {
+      type: 'skill',
+      name: 'skill',
+      template: skillTemplate,
+      description: 'Reusable skill with trigger conditions, process, and constraints',
+    },
+  ],
 ]);
 
 export function getTemplate(name: string): TemplateEntry | undefined {
   return templates.get(name);
+}
+
+export function hasTemplate(name: string): boolean {
+  return templates.has(name);
 }
 
 export function listTemplates(type?: TemplateType): TemplateEntry[] {
@@ -111,4 +148,4 @@ export function renderTemplate(name: string, data: TemplateData): string {
   return compileTemplate(entry.template, data);
 }
 
-export { TemplateData };
+export { TemplateData, TemplateType, TemplateEntry };

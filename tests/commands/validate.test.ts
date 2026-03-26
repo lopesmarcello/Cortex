@@ -35,7 +35,7 @@ describe('validateCommand', () => {
         writeFile(
             ws.root,
             'ai/tasks/active/TASK-001.task.md',
-            '# TASK-001\n\n## Context\nA\n\n## References\n- architecture.instructions.md\n- code-generator.agent.md\n\n## Steps\n1. [ ] Step\n\n## Acceptance Criteria\n- [ ] Done\n\n## Status\n- [ ] In progress\n',
+            '# TASK-001\n\n## Context\nA\n\n## References\n- architecture.instructions.md\n- code-generator.agent.md\n\n## Dependencies\nNone\n\n## Steps\n1. [ ] Step\n\n## Acceptance Criteria\n- [ ] Done\n\n## Notes\nN/A\n',
         );
         writeFile(ws.root, 'ai/tasks/done/.keep', '');
         writeFile(ws.root, 'ai/skills/.keep', '');

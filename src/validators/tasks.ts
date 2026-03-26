@@ -5,9 +5,10 @@ import type { ValidationIssue, ValidationSummary } from './instructions.js';
 const REQUIRED_SECTIONS = [
     '## Context',
     '## References',
+    '## Dependencies',
     '## Steps',
     '## Acceptance Criteria',
-    '## Status',
+    '## Notes',
 ];
 
 function extractReferences(markdown: string, suffix: '.instructions.md' | '.agent.md'): string[] {

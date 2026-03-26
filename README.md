@@ -101,11 +101,19 @@ syntra add skill api-pagination
 
 If `sync.autoSync: true` in `ai/config.yml`, add operations trigger silent adapter sync.
 
+For `task`, task IDs and task directories are read from `ai/config.yml`:
+
+- `tasks.idPrefix` (default: `TASK-`)
+- `tasks.activeDir` (default: `active`)
+- `tasks.doneDir` (default: `done`)
+
+Task file format requirements are documented in **Task Template Contract** below.
+
 ---
 
 ## `syntra done <taskId>`
 
-Moves a task from active to done:
+Moves a task from the configured active directory to the configured done directory:
 
 ```bash
 syntra done TASK-001
@@ -146,7 +154,7 @@ Checks include:
 - `ai/config.yml` schema basics
 - instruction naming/format
 - agent references to instructions
-- task structure and references
+- task structure and references (requires `Context`, `References`, `Dependencies`, `Steps`, `Acceptance Criteria`, `Notes`)
 - sync freshness/manual edit risk signals
 
 ```bash
@@ -188,6 +196,47 @@ Typical sections:
 - `sync`: auto-sync and manual edit warnings
 - `tasks`: ID prefix and folders
 - `language`: generation language
+
+---
+
+## Task Template Contract
+
+Task files must follow this structure to pass validation:
+
+- Required headings: `Context`, `References`, `Dependencies`, `Steps`, `Acceptance Criteria`, `Notes`
+- File location: `ai/tasks/{tasks.activeDir}/{taskId}.task.md` while active
+- Task ID prefix: must match `tasks.idPrefix` from `ai/config.yml`
+
+Example:
+
+```markdown
+# TASK-001: Add date utility validation
+
+## Context
+Add a reusable date validation helper used by form input checks.
+
+## References
+- **Agent**: [code-generator](../agents/code-generator.agent.md)
+- **Instructions**:
+	- [architecture](../instructions/architecture.instructions.md)
+	- [testing](../instructions/testing.instructions.md)
+
+## Dependencies
+None
+
+## Steps
+1. [ ] Add `isDateAfterToday` in `src/utils/date.ts`
+2. [ ] Add unit tests for happy path and edge cases
+3. [ ] Use helper in form validation flow
+
+## Acceptance Criteria
+- [ ] Returns `true` only for strictly future dates
+- [ ] Returns `false` for invalid or empty input
+- [ ] Unit tests cover new logic and pass
+
+## Notes
+Keep changes scoped to utility + tests + call site.
+```
 
 ---
 

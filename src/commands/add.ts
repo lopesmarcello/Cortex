@@ -108,10 +108,18 @@ async function addAgent(
 async function addTask(aiPath: string, config: any): Promise<void> {
     logger.section('Add Task');
 
+    const taskPrefix = config.tasks?.idPrefix ?? 'TASK-';
+    const activeDir = config.tasks?.activeDir ?? 'active';
+
     const taskId = (await prompt({
-        message: 'Task ID (e.g., TASK-001):',
+        message: `Task ID (e.g., ${taskPrefix}001):`,
         validate: (val) => {
-            return val.length > 0 ? true : 'Task ID is required';
+            if (!val.length) {
+                return 'Task ID is required';
+            }
+            return val.startsWith(taskPrefix)
+                ? true
+                : `Task ID must start with ${taskPrefix}`;
         },
     })) as string;
 
@@ -139,6 +147,7 @@ async function addTask(aiPath: string, config: any): Promise<void> {
         description,
         instructions,
         agent,
+        dependencies: [],
         steps: ['Step 1', 'Step 2', 'Step 3'],
         acceptanceCriteria: ['Criterion 1', 'Criterion 2'],
         projectProfile: {
@@ -153,10 +162,10 @@ async function addTask(aiPath: string, config: any): Promise<void> {
     };
 
     const content = renderTemplate('task', templateData);
-    const filePath = path.join(aiPath, 'tasks', 'active', `${taskId}.task.md`);
+    const filePath = path.join(aiPath, 'tasks', activeDir, `${taskId}.task.md`);
 
     fsUtils.writeFile(filePath, content);
-    logger.success(`Created: ai/tasks/active/${taskId}.task.md`);
+    logger.success(`Created: ai/tasks/${activeDir}/${taskId}.task.md`);
 }
 
 async function addSkill(
