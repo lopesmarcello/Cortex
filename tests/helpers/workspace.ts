@@ -7,7 +7,7 @@ export interface TestWorkspace {
     cleanup: () => void;
 }
 
-export function createWorkspace(prefix: string = 'cortex-ai-test-'): TestWorkspace {
+export function createWorkspace(prefix: string = 'syntra-test-'): TestWorkspace {
     const root = fs.mkdtempSync(path.join(os.tmpdir(), prefix));
     return {
         root,

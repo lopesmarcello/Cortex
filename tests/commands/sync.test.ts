@@ -16,7 +16,7 @@ describe('syncCommand', () => {
     it('generates adapter files and sync state for enabled adapters', () => {
         vi.spyOn(console, 'log').mockImplementation(() => undefined);
 
-        const ws = createWorkspace('cortex-ai-sync-');
+        const ws = createWorkspace('syntra-sync-');
         cleanups.push(ws.cleanup);
 
         writeConfig(ws.root, { copilot: true, claude: true, cursor: true });
@@ -34,7 +34,7 @@ describe('syncCommand', () => {
     it('syncs only explicit target when flags are provided', () => {
         vi.spyOn(console, 'log').mockImplementation(() => undefined);
 
-        const ws = createWorkspace('cortex-ai-sync-targeted-');
+        const ws = createWorkspace('syntra-sync-targeted-');
         cleanups.push(ws.cleanup);
 
         writeConfig(ws.root, { copilot: true, claude: true, cursor: true });

@@ -145,8 +145,8 @@ export async function initCommand(rootPath: string = process.cwd()): Promise<voi
         logger.newline();
         logger.info('Next steps:');
         logger.dim('1. Edit ai/instructions/*.md to customize for your project');
-        logger.dim('2. Run `cortex-ai add task` to create your first task');
-        logger.dim('3. Run `cortex-ai sync` to sync adapters for your AI tools');
+        logger.dim('2. Run `syntra add task` to create your first task');
+        logger.dim('3. Run `syntra sync` to sync adapters for your AI tools');
     } catch (e) {
         spinner.fail();
         logger.error(`Initialization failed: ${e}`);

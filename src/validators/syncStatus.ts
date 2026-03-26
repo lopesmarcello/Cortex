@@ -93,7 +93,7 @@ export function validateSyncStatus(rootPath: string, config: Config): Validation
         if (newestCanonical > oldestAdapter) {
             issues.push({
                 level: 'warning',
-                message: 'Sync status: adapter files may be out of date. Run `cortex-ai sync`.',
+                message: 'Sync status: adapter files may be out of date. Run `syntra sync`.',
             });
         }
     }

@@ -12,7 +12,7 @@ This guide is for contributors who want to run Cortex locally, add features, and
 
 ```bash
 git clone <repo-url>
-cd cortex-ai
+cd syntra
 npm install
 ```
 
@@ -66,11 +66,11 @@ Use both before opening a PR.
 Use a temporary workspace to avoid modifying real projects:
 
 ```bash
-mkdir -p /tmp/cortex-ai-smoke && cd /tmp/cortex-ai-smoke
-node /path/to/cortex-ai/dist/index.js init
-node /path/to/cortex-ai/dist/index.js add task
-node /path/to/cortex-ai/dist/index.js sync
-node /path/to/cortex-ai/dist/index.js validate
+mkdir -p /tmp/syntra-smoke && cd /tmp/syntra-smoke
+node /path/to/syntra/dist/index.js init
+node /path/to/syntra/dist/index.js add task
+node /path/to/syntra/dist/index.js sync
+node /path/to/syntra/dist/index.js validate
 ```
 
 ## 6) Project structure (high-level)

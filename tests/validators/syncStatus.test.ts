@@ -18,7 +18,7 @@ describe('validateSyncStatus', () => {
     it('warns when adapters are enabled but no adapter files exist', () => {
         vi.spyOn(console, 'log').mockImplementation(() => undefined);
 
-        const ws = createWorkspace('cortex-ai-syncstatus-empty-');
+        const ws = createWorkspace('syntra-syncstatus-empty-');
         cleanups.push(ws.cleanup);
 
         writeConfig(ws.root, { copilot: true, claude: false, cursor: false });
@@ -34,7 +34,7 @@ describe('validateSyncStatus', () => {
     it('warns when canonical files are newer than adapter files', async () => {
         vi.spyOn(console, 'log').mockImplementation(() => undefined);
 
-        const ws = createWorkspace('cortex-ai-syncstatus-stale-');
+        const ws = createWorkspace('syntra-syncstatus-stale-');
         cleanups.push(ws.cleanup);
 
         writeConfig(ws.root, { copilot: true, claude: false, cursor: false });

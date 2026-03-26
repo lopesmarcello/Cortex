@@ -16,7 +16,7 @@ describe('validateCommand', () => {
     it('returns error when config is missing', () => {
         vi.spyOn(console, 'log').mockImplementation(() => undefined);
 
-        const ws = createWorkspace('cortex-ai-validate-missing-');
+        const ws = createWorkspace('syntra-validate-missing-');
         cleanups.push(ws.cleanup);
 
         const result = validateCommand(ws.root);
@@ -26,7 +26,7 @@ describe('validateCommand', () => {
     it('returns clean result for valid minimal setup', () => {
         vi.spyOn(console, 'log').mockImplementation(() => undefined);
 
-        const ws = createWorkspace('cortex-ai-validate-clean-');
+        const ws = createWorkspace('syntra-validate-clean-');
         cleanups.push(ws.cleanup);
 
         writeConfig(ws.root, { copilot: false, claude: false, cursor: false });
@@ -48,7 +48,7 @@ describe('validateCommand', () => {
     it('returns warning when agent references missing instruction', () => {
         vi.spyOn(console, 'log').mockImplementation(() => undefined);
 
-        const ws = createWorkspace('cortex-ai-validate-warning-');
+        const ws = createWorkspace('syntra-validate-warning-');
         cleanups.push(ws.cleanup);
 
         writeConfig(ws.root, { copilot: false, claude: false, cursor: false });

@@ -10,3 +10,5 @@ PLAN.md
 
 # Dependencies
 node_modules/
+
+.env

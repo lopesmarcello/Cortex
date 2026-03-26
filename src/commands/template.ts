@@ -18,13 +18,13 @@ function getTemplatePath(name: string): string {
 
 export function templateSaveCommand(name: string, rootPath: string = process.cwd()): void {
     if (!name || !name.trim()) {
-        logger.error('Template name is required. Usage: cortex-ai template save <name>');
+        logger.error('Template name is required. Usage: syntra template save <name>');
         return;
     }
 
     const aiDir = path.join(rootPath, 'ai');
     if (!fsUtils.isDirectory(aiDir)) {
-        logger.error('No ai/ directory found. Run `cortex-ai init` first.');
+        logger.error('No ai/ directory found. Run `syntra init` first.');
         return;
     }
 
@@ -51,7 +51,7 @@ export function templateListCommand(): void {
         .sort((a, b) => a.localeCompare(b));
 
     if (entries.length === 0) {
-        logger.info('No templates found. Save one with `cortex-ai template save <name>`.');
+        logger.info('No templates found. Save one with `syntra template save <name>`.');
         return;
     }
 

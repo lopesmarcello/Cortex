@@ -1,11 +1,11 @@
 {
-    "name": "cortex-ai",
-    "version": "0.1.1",
+    "name": "syntra",
+    "version": "0.1.2",
     "description": "CLI tool that scaffolds, manages, and syncs an AI-assisted development framework across projects and AI tools",
     "type": "module",
     "main": "dist/index.js",
     "bin": {
-        "cortex-ai": "dist/index.js"
+        "syntra": "dist/index.js"
     },
     "scripts": {
         "dev": "tsx src/index.ts",
