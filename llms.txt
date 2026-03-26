@@ -1,0 +1,180 @@
+# Syntra CLI
+
+> A CLI tool that scaffolds, manages, validates, and syncs an AI-assisted development framework across tools like GitHub Copilot, Claude Code, and Cursor.
+
+## Core Principle
+
+`ai/` is the **single source of truth**. All adapter folders (`.github/`, `.claude/`, `.cursor/`) are generated artifacts derived from the canonical `ai/` directory. Never edit adapter files directly — edit `ai/` then run `syntra sync`.
+
+## Project Metadata
+
+- **Package name**: syntra
+- **Version**: 0.2.0
+- **Language**: TypeScript (ESM, Node.js >=18)
+- **Entry point**: `src/index.ts` → compiled to `dist/index.js`
+- **License**: MIT
+- **Key dependencies**: commander, inquirer, handlebars, yaml, chalk, ora, fast-glob, ajv
+
+## Canonical Directory Structure (after `syntra init`)
+
+```
+project-root/
+├── ai/
+│   ├── config.yml              # Main config: adapters, sync, tasks, project profile
+│   ├── instructions/           # *.instructions.md — shared coding guidelines
+│   ├── agents/                 # *.agent.md — AI agent definitions
+│   ├── skills/                 # *.skill.md — reusable skill definitions
+│   └── tasks/
+│       ├── active/             # *.task.md — in-progress tasks
+│       └── done/               # *.task.md — completed tasks
+│
+├── .github/                    # Copilot adapter (generated)
+│   ├── copilot-instructions.md
+│   └── agents/*.md
+├── .claude/                    # Claude Code adapter (generated)
+│   └── CLAUDE.md
+└── .cursor/                    # Cursor adapter (generated)
+    └── rules/*.mdc
+```
+
+## Source Code Structure
+
+```
+src/
+├── index.ts                    # CLI entry: commander program wiring
+├── commands/
+│   ├── init.ts                 # syntra init — interactive project setup
+│   ├── add.ts                  # syntra add — add instructions/agents/tasks/skills
+│   ├── done.ts                 # syntra done — move task to done/
+│   ├── sync.ts                 # syntra sync — regenerate adapter files
+│   ├── validate.ts             # syntra validate — lint framework correctness
+│   └── template.ts             # syntra template — save/list reusable templates
+├── adapters/
+│   ├── index.ts                # orchestrates all adapters
+│   ├── common.ts               # shared adapter utilities
+│   ├── copilot.ts              # GitHub Copilot file generator
+│   ├── claude.ts               # Claude Code file generator
+│   └── cursor.ts               # Cursor file generator
+├── detectors/
+│   ├── index.ts
+│   ├── language.ts             # detects project language (TS/JS/Python/etc.)
+│   ├── framework.ts            # detects framework (React/Next/Vue/etc.)
+│   ├── packageManager.ts       # detects npm/yarn/pnpm/bun
+│   ├── cicd.ts                 # detects CI/CD (GitHub Actions/etc.)
+│   ├── existingAi.ts           # detects existing AI config files
+│   └── monorepo.ts             # detects monorepo structure
+├── templates/
+│   ├── engine.ts               # Handlebars-based template renderer
+│   ├── registry.ts             # template lookup and resolution
+│   ├── agents/                 # built-in agent templates
+│   │   ├── bugFixer.ts
+│   │   ├── codeGenerator.ts
+│   │   ├── codeReviewer.ts
+│   │   ├── taskPlanner.ts
+│   │   └── index.ts
+│   ├── instructions/           # built-in instruction templates
+│   │   ├── architecture.ts
+│   │   ├── deploy.ts
+│   │   ├── security.ts
+│   │   ├── style.ts
+│   │   └── testing.ts
+│   └── files/
+│       └── index.ts            # static file templates
+├── validators/
+│   ├── config.ts               # validates ai/config.yml schema
+│   ├── agents.ts               # validates agent file format/references
+│   ├── instructions.ts         # validates instruction naming and format
+│   ├── tasks.ts                # validates task file structure and required headings
+│   └── syncStatus.ts           # warns on stale/manually-edited adapter files
+└── utils/
+    ├── fs.ts                   # file read/write/glob helpers
+    ├── logger.ts               # chalk-based logger (info/warn/error/success)
+    ├── prompt.ts               # inquirer prompt wrappers
+    └── types.ts                # shared TypeScript types and interfaces
+
+tests/
+├── commands/                   # integration tests per command
+├── validators/                 # unit tests for validation logic
+└── helpers/workspace.ts        # test workspace setup utilities
+```
+
+## CLI Commands
+
+### `syntra init`
+Interactive setup wizard. Auto-detects language, framework, package manager, and CI. Prompts for instruction templates, agents, and adapter targets. Creates `ai/` structure and runs initial sync.
+
+### `syntra add <type> [name]`
+Adds a framework file from a built-in template. Valid types:
+- `instruction` — adds an `*.instructions.md` to `ai/instructions/`
+- `agent` — adds an `*.agent.md` to `ai/agents/`
+- `task` — interactive task creation in `ai/tasks/active/`
+- `skill` — adds a `*.skill.md` to `ai/skills/`
+
+If `sync.autoSync: true` in `ai/config.yml`, add operations trigger a silent adapter sync.
+
+### `syntra done <taskId>`
+Moves `ai/tasks/active/<taskId>.task.md` to `ai/tasks/done/`. Task ID prefix and directory names are configurable in `ai/config.yml`.
+
+### `syntra sync [--copilot] [--claude] [--cursor]`
+Reads all files in `ai/` and regenerates adapter-specific files. Without flags, syncs all enabled adapters. With a flag, syncs only that adapter.
+
+Generated outputs:
+- **Copilot**: `.github/copilot-instructions.md` + `.github/agents/*.md`
+- **Claude**: `.claude/CLAUDE.md`
+- **Cursor**: `.cursor/rules/*.mdc`
+
+### `syntra validate`
+Validates the full framework for correctness. Checks:
+- `ai/config.yml` schema
+- Instruction naming and format
+- Agent references pointing to valid instructions
+- Task structure (required headings: `Context`, `References`, `Dependencies`, `Steps`, `Acceptance Criteria`, `Notes`)
+- Sync freshness and manual-edit risk signals
+
+Exits non-zero on errors; warnings do not fail the process.
+
+### `syntra template save <name>` / `syntra template list`
+Saves the current `ai/` configuration as a named reusable template stored in `~/.syntra/templates/`. Lists previously saved templates.
+
+## Configuration: `ai/config.yml`
+
+Key sections:
+- `project` — language, framework, packageManager profile
+- `adapters` — which adapters are enabled and instruction rendering mode
+- `sync` — `autoSync` boolean and manual-edit warnings
+- `tasks` — `idPrefix` (default: `TASK-`), `activeDir`, `doneDir`
+- `language` — generation language for template content
+
+## Task File Contract
+
+Task files must live at `ai/tasks/{activeDir}/{taskId}.task.md` and contain all of these headings:
+- `## Context`
+- `## References`
+- `## Dependencies`
+- `## Steps`
+- `## Acceptance Criteria`
+- `## Notes`
+
+## Typical Development Workflow
+
+```bash
+syntra init                                         # 1. Initialize
+$EDITOR ai/instructions/architecture.instructions.md  # 2. Customize instructions
+syntra add task                                     # 3. Create a task
+syntra sync                                         # 4. Regenerate adapters
+# Use your AI tool to execute the task (e.g. /TASK-001)
+syntra done TASK-001                                # 5. Mark complete
+syntra validate                                     # 6. Verify framework health
+```
+
+## Development & Testing
+
+```bash
+npm install
+npm run dev -- --help     # run without building
+npm run build             # compile TypeScript
+npm test                  # run vitest test suite
+npm run lint              # ESLint over src/
+```
+
+Test coverage includes: sync generation, done command, validation outcomes, template save/list, sync status warnings.
