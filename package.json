@@ -1,11 +1,11 @@
 {
-    "name": "cortex",
-    "version": "0.1.0",
+    "name": "cortex-ai",
+    "version": "0.1.1",
     "description": "CLI tool that scaffolds, manages, and syncs an AI-assisted development framework across projects and AI tools",
     "type": "module",
     "main": "dist/index.js",
     "bin": {
-        "cortex": "dist/index.js"
+        "cortex-ai": "dist/index.js"
     },
     "scripts": {
         "dev": "tsx src/index.ts",

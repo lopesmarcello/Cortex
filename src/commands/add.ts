@@ -13,7 +13,7 @@ export async function addCommand(
 ): Promise<void> {
     const config = loadConfig(rootPath);
     if (!config) {
-        logger.error('No cortex configuration found. Run `cortex init` first.');
+        logger.error('No cortex-ai configuration found. Run `cortex-ai init` first.');
         return;
     }
 

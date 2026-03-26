@@ -8,7 +8,7 @@ import { createWorkspace, writeConfig, writeFile } from '../helpers/workspace.js
 const cleanups: Array<() => void> = [];
 
 function withTempHome(): { home: string; cleanup: () => void } {
-    const home = fs.mkdtempSync(path.join(os.tmpdir(), 'cortex-home-'));
+    const home = fs.mkdtempSync(path.join(os.tmpdir(), 'cortex-ai-home-'));
     const homedirSpy = vi.spyOn(os, 'homedir').mockReturnValue(home);
     return {
         home,
@@ -31,7 +31,7 @@ describe('template commands', () => {
     it('saves ai folder as named template', () => {
         vi.spyOn(console, 'log').mockImplementation(() => undefined);
 
-        const ws = createWorkspace('cortex-template-');
+        const ws = createWorkspace('cortex-ai-template-');
         cleanups.push(ws.cleanup);
         const home = withTempHome();
         cleanups.push(home.cleanup);
@@ -49,7 +49,7 @@ describe('template commands', () => {
     it('lists available templates', () => {
         const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => undefined);
 
-        const ws = createWorkspace('cortex-template-list-');
+        const ws = createWorkspace('cortex-ai-template-list-');
         cleanups.push(ws.cleanup);
         const home = withTempHome();
         cleanups.push(home.cleanup);

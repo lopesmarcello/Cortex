@@ -16,7 +16,7 @@ describe('doneCommand', () => {
     it('moves task from active to done folder', () => {
         vi.spyOn(console, 'log').mockImplementation(() => undefined);
 
-        const ws = createWorkspace('cortex-done-');
+        const ws = createWorkspace('cortex-ai-done-');
         cleanups.push(ws.cleanup);
 
         writeFile(ws.root, 'ai/tasks/active/TASK-001.task.md', '# TASK-001\n');

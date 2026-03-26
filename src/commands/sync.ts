@@ -13,7 +13,7 @@ export interface SyncCommandOptions {
 export function syncCommand(rootPath: string = process.cwd(), options: SyncCommandOptions = {}): void {
     const config = loadConfig(rootPath);
     if (!config) {
-        logger.error('No cortex configuration found. Run `cortex init` first.');
+        logger.error('No cortex-ai configuration found. Run `cortex-ai init` first.');
         return;
     }
 

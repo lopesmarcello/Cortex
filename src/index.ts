@@ -12,7 +12,7 @@ import { logger } from './utils/logger.js';
 const program = new Command();
 
 program
-    .name('cortex')
+    .name('cortex-ai')
     .description('AI-assisted development framework CLI')
     .version('0.1.0');
 

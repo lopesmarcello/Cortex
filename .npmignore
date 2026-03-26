@@ -1,0 +1,12 @@
+# Dev/test files
+src/
+tests/
+*.tgz
+.github/
+tsconfig.json
+vitest.config.ts
+DEV.md
+PLAN.md
+
+# Dependencies
+node_modules/

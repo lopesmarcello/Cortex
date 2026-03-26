@@ -1,6 +1,6 @@
 # Cortex CLI
 
-`cortex` is a CLI that scaffolds, manages, validates, and syncs an AI-assisted development framework across tools like GitHub Copilot, Claude Code, and Cursor.
+`cortex-ai` is a CLI that scaffolds, manages, validates, and syncs an AI-assisted development framework across tools like GitHub Copilot, Claude Code, and Cursor.
 
 Core principle: **`ai/` is the source of truth**. Adapter folders (`.github/`, `.claude/`, `.cursor/`) are generated artifacts.
 
@@ -11,14 +11,14 @@ Core principle: **`ai/` is the source of truth**. Adapter folders (`.github/`, `
 ### Run with npx
 
 ```bash
-npx cortex init
+npx cortex-ai init
 ```
 
 ### Global install
 
 ```bash
-npm i -g cortex
-cortex --help
+npm i -g cortex-ai
+cortex-ai --help
 ```
 
 ### Local development usage
@@ -32,7 +32,7 @@ node dist/index.js --help
 
 ## Canonical Structure
 
-After `cortex init`, the framework is structured like this:
+After `cortex-ai init`, the framework is structured like this:
 
 ```text
 project-root/
@@ -57,13 +57,13 @@ project-root/
 └── .cursor/
 ```
 
-You edit files in `ai/`, then run `cortex sync` to regenerate adapters.
+You edit files in `ai/`, then run `cortex-ai sync` to regenerate adapters.
 
 ---
 
 ## Commands
 
-## `cortex init`
+## `cortex-ai init`
 
 Interactive setup:
 
@@ -74,12 +74,12 @@ Interactive setup:
 - Runs initial adapter sync
 
 ```bash
-cortex init
+cortex-ai init
 ```
 
 ---
 
-## `cortex add <type> [name]`
+## `cortex-ai add <type> [name]`
 
 Adds framework files from templates.
 
@@ -93,40 +93,40 @@ Supported types:
 Examples:
 
 ```bash
-cortex add instruction microfrontends
-cortex add agent bug-fixer
-cortex add task
-cortex add skill api-pagination
+cortex-ai add instruction microfrontends
+cortex-ai add agent bug-fixer
+cortex-ai add task
+cortex-ai add skill api-pagination
 ```
 
 If `sync.autoSync: true` in `ai/config.yml`, add operations trigger silent adapter sync.
 
 ---
 
-## `cortex done <taskId>`
+## `cortex-ai done <taskId>`
 
 Moves a task from active to done:
 
 ```bash
-cortex done TASK-001
+cortex-ai done TASK-001
 ```
 
 ---
 
-## `cortex sync`
+## `cortex-ai sync`
 
 Generates tool-specific adapter files from canonical `ai/` files.
 
 ```bash
-cortex sync
+cortex-ai sync
 ```
 
 Target-specific sync:
 
 ```bash
-cortex sync --copilot
-cortex sync --claude
-cortex sync --cursor
+cortex-ai sync --copilot
+cortex-ai sync --claude
+cortex-ai sync --cursor
 ```
 
 What gets generated:
@@ -137,7 +137,7 @@ What gets generated:
 
 ---
 
-## `cortex validate`
+## `cortex-ai validate`
 
 Validates framework correctness and sync state.
 
@@ -150,7 +150,7 @@ Checks include:
 - sync freshness/manual edit risk signals
 
 ```bash
-cortex validate
+cortex-ai validate
 ```
 
 Exit behavior:
@@ -160,13 +160,13 @@ Exit behavior:
 
 ---
 
-## `cortex template`
+## `cortex-ai template`
 
 Save and list reusable templates.
 
 ```bash
-cortex template save my-team-template
-cortex template list
+cortex-ai template save my-team-template
+cortex-ai template list
 ```
 
 Saved templates are stored in:
@@ -195,25 +195,25 @@ Typical sections:
 
 ```bash
 # 1) Initialize
-cortex init
+cortex-ai init
 
 # 2) Customize instructions
 $EDITOR ai/instructions/architecture.instructions.md
 
 # 3) Add a task
-cortex add task
+cortex-ai add task
 
 # 4) Sync adapters
-cortex sync
+cortex-ai sync
 
 # 5) Execute task with your coding agent
 # e.g. /TASK-001
 
 # 6) Mark done
-cortex done TASK-001
+cortex-ai done TASK-001
 
 # 7) Validate setup
-cortex validate
+cortex-ai validate
 ```
 
 ---
