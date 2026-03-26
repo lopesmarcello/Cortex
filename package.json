@@ -1,6 +1,6 @@
 {
     "name": "syntra",
-    "version": "0.1.3",
+    "version": "0.1.4",
     "description": "CLI tool that scaffolds, manages, and syncs an AI-assisted development framework across projects and AI tools",
     "type": "module",
     "main": "dist/index.js",
