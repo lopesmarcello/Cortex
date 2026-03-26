@@ -1,6 +1,6 @@
-# Cortex CLI
+# Syntra CLI
 
-`syntra` is a CLI that scaffolds, manages, validates, and syncs an AI-assisted development framework across tools like GitHub Copilot, Claude Code, and Cursor.
+Syntra is a CLI that scaffolds, manages, validates, and syncs an AI-assisted development framework across tools like GitHub Copilot, Claude Code, and Cursor.
 
 Core principle: **`ai/` is the source of truth**. Adapter folders (`.github/`, `.claude/`, `.cursor/`) are generated artifacts.
 
@@ -169,10 +169,10 @@ syntra template save my-team-template
 syntra template list
 ```
 
-Saved templates are stored in:
+Saved templates are currently stored in:
 
 ```text
-~/.ai-fw/templates/
+~/.syntra/templates/
 ```
 
 ---

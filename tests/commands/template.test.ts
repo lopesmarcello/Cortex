@@ -41,8 +41,8 @@ describe('template commands', () => {
 
         templateSaveCommand('team-template', ws.root);
 
-        const directPath = path.join(home.home, '.ai-fw', 'templates', 'team-template', 'instructions', 'architecture.instructions.md');
-        const nestedPath = path.join(home.home, '.ai-fw', 'templates', 'team-template', 'ai', 'instructions', 'architecture.instructions.md');
+        const directPath = path.join(home.home, '.syntra', 'templates', 'team-template', 'instructions', 'architecture.instructions.md');
+        const nestedPath = path.join(home.home, '.syntra', 'templates', 'team-template', 'ai', 'instructions', 'architecture.instructions.md');
         expect(fs.existsSync(directPath) || fs.existsSync(nestedPath)).toBe(true);
     });
 

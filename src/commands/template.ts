@@ -5,7 +5,7 @@ import { fsUtils } from '../utils/fs.js';
 import { logger } from '../utils/logger.js';
 
 function getTemplateRoot(): string {
-    return path.join(os.homedir(), '.ai-fw', 'templates');
+    return path.join(os.homedir(), '.syntra', 'templates');
 }
 
 function ensureTemplateRoot(): void {

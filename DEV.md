@@ -1,6 +1,6 @@
 # Development Guide (DEV)
 
-This guide is for contributors who want to run Cortex locally, add features, and verify behavior before opening a PR.
+This guide is for contributors who want to run Syntra locally, add features, and verify behavior before opening a PR.
 
 ## Prerequisites
 
