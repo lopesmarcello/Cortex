@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { syncCommand } from '../../src/commands/sync.js';
-import { createWorkspace, fileExists, writeCanonicalFiles, writeConfig } from '../helpers/workspace.js';
+import { createWorkspace, fileExists, writeCanonicalFiles, writeConfig, writeFile } from '../helpers/workspace.js';
 
 const cleanups: Array<() => void> = [];
 
@@ -45,5 +45,24 @@ describe('syncCommand', () => {
         expect(fileExists(ws.root, '.github/copilot-instructions.md')).toBe(true);
         expect(fileExists(ws.root, '.claude/CLAUDE.md')).toBe(false);
         expect(fileExists(ws.root, '.cursor/rules/architecture.mdc')).toBe(false);
+    });
+
+    it('writes tasks to .github/prompts/ as .prompt.md files', () => {
+        vi.spyOn(console, 'log').mockImplementation(() => undefined);
+
+        const ws = createWorkspace('syntra-sync-tasks-');
+        cleanups.push(ws.cleanup);
+
+        writeConfig(ws.root, { copilot: true });
+        writeCanonicalFiles(ws.root);
+        writeFile(
+            ws.root,
+            'ai/tasks/active/TASK-001.task.md',
+            '# TASK-001: Add login page\n\n## Steps\n1. [ ] Create component\n',
+        );
+
+        syncCommand(ws.root, { copilot: true, silent: true });
+
+        expect(fileExists(ws.root, '.github/prompts/TASK-001.prompt.md')).toBe(true);
     });
 });
