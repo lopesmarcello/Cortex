@@ -110,4 +110,26 @@ describe('addCommand skill flow', () => {
         expect(content).toContain('# custom-skill');
         expect(content).toContain('## Purpose');
     });
+
+    it('normalizes slash-prefixed skill names from command-style input', async () => {
+        vi.spyOn(console, 'log').mockImplementation(() => undefined);
+
+        const ws = createWorkspace('syntra-add-skill-slash-prefix-');
+        cleanups.push(ws.cleanup);
+
+        writeConfig(ws.root, {
+            copilot: false,
+            claude: false,
+            cursor: false,
+        });
+
+        await addCommand('skill', '/syntra-task', ws.root);
+
+        const filePath = 'ai/skills/syntra-task.skill.md';
+        expect(fileExists(ws.root, filePath)).toBe(true);
+        const content = await fs.promises.readFile(`${ws.root}/${filePath}`, 'utf8');
+
+        expect(content).toContain('name: syntra-task');
+        expect(content).toContain('/syntra-task {brief description}');
+    });
 });

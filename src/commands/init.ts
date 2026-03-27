@@ -125,8 +125,18 @@ export async function initCommand(rootPath: string = process.cwd()): Promise<voi
         fsUtils.mkdir(path.join(tasksPath, 'active'));
         fsUtils.mkdir(path.join(tasksPath, 'done'));
 
-        // Create skills directory
-        fsUtils.mkdir(path.join(aiPath, 'skills'));
+        // Create skills directory and auto-create syntra-task skill
+        const skillsPath = path.join(aiPath, 'skills');
+        fsUtils.mkdir(skillsPath);
+
+        const skillTemplateData = {
+            projectProfile: profile,
+            projectName: projectName as string,
+            skillName: 'syntra-task',
+        };
+        const skillContent = renderTemplate('syntra-task', skillTemplateData);
+        const skillFilePath = path.join(skillsPath, 'syntra-task.skill.md');
+        fsUtils.writeFile(skillFilePath, skillContent);
 
         spinner2.succeed();
 
@@ -141,11 +151,12 @@ export async function initCommand(rootPath: string = process.cwd()): Promise<voi
         logger.info(`Config saved to: ai/config.yml`);
         logger.info(`Instructions: ${selectedInstructions.length} files created`);
         logger.info(`Agents: ${selectedAgents.length} files created`);
+        logger.info(`Skills: syntra-task`);
         logger.info(`Synced adapters: ${syncResult.targets.join(', ')}`);
         logger.newline();
         logger.info('Next steps:');
         logger.dim('1. Edit ai/instructions/*.md to customize for your project');
-        logger.dim('2. Run `syntra add task` to create your first task');
+        logger.dim('2. In your AI tool, run `/task {brief}` to create your first task');
         logger.dim('3. Run `syntra sync` to sync adapters for your AI tools');
     } catch (e) {
         spinner.fail();

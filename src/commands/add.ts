@@ -181,6 +181,16 @@ async function addSkill(
         })) as string;
     }
 
+    const normalizedSkillName = name
+        .trim()
+        .replace(/^\/+/, '')
+        .toLowerCase();
+
+    if (!normalizedSkillName) {
+        logger.error('Skill name is required. Example: syntra add skill api-pagination');
+        return;
+    }
+
     const templateData = {
         projectProfile: {
             language: config.project.language,
@@ -191,13 +201,13 @@ async function addSkill(
             existingAi: { copilot: false, claude: false, cursor: false },
         },
         projectName: config.project.name,
-        skillName: name,
+        skillName: normalizedSkillName,
     };
 
-    const templateName = hasTemplate(name) ? name : 'skill';
+    const templateName = hasTemplate(normalizedSkillName) ? normalizedSkillName : 'skill';
     const content = renderTemplate(templateName, templateData);
-    const filePath = path.join(aiPath, 'skills', `${name}.skill.md`);
+    const filePath = path.join(aiPath, 'skills', `${normalizedSkillName}.skill.md`);
 
     fsUtils.writeFile(filePath, content);
-    logger.success(`Created: ai/skills/${name}.skill.md`);
+    logger.success(`Created: ai/skills/${normalizedSkillName}.skill.md`);
 }

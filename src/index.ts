@@ -66,12 +66,14 @@ program
     .option('--copilot', 'Sync only GitHub Copilot adapter')
     .option('--claude', 'Sync only Claude Code adapter')
     .option('--cursor', 'Sync only Cursor adapter')
-    .action((options: { copilot?: boolean; claude?: boolean; cursor?: boolean }) => {
+    .option('--tasks-only', 'Sync only active task artifacts where supported')
+    .action((options: { copilot?: boolean; claude?: boolean; cursor?: boolean; tasksOnly?: boolean }) => {
         try {
             syncCommand(process.cwd(), {
                 copilot: options.copilot,
                 claude: options.claude,
                 cursor: options.cursor,
+                tasksOnly: options.tasksOnly,
             });
         } catch (e) {
             logger.error(`Failed: ${e}`);

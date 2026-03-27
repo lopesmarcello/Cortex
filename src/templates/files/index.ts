@@ -70,7 +70,7 @@ export const skillTemplate = `# {{skillName}}
 
 export const syntraTaskSkillTemplate = `---
 name: syntra-task
-description: "Create a Syntra task from a brief description by asking clarifying questions and producing a valid task file. Trigger: /syntra-task {brief}."
+description: "Create a Syntra task from a brief description by asking clarifying questions and producing a valid task file. Trigger: /task {brief} (alias: /syntra-task)."
 user-invocable: true
 ---
 
@@ -85,11 +85,15 @@ Create a fully structured Syntra task file from a short user brief.
 Use this skill when the user runs:
 
 
-\`/syntra-task {brief description}\`
+\`/task {brief description}\`
 
 Example:
 
-\`/syntra-task add role-based authorization checks to project routes\`
+\`/task add role-based authorization checks to project routes\`
+
+Backwards-compatible alias:
+
+\`/syntra-task {brief description}\`
 
 ---
 
@@ -207,15 +211,33 @@ Save task file to:
 
 Where activeDir and taskId come from project config and generated ID.
 
+Critical:
+
+- You MUST create this file directly using available file-editing tools.
+- Do NOT print the full task as copy/paste output for the user.
+- After writing, read the file back once to confirm it exists and content is complete.
+- If file tools are unavailable, use a shell command to create the file and then verify it exists.
+
+Shell fallback example:
+
+\`mkdir -p ai/tasks/{activeDir}\`
+\`cat > ai/tasks/{activeDir}/{taskId}.task.md <<'EOF'\`
+[task markdown content]
+\`EOF\`
+
 ---
 
 ## Output to User
 
-After saving, return:
+After creating and verifying the file, return:
 
 - Created task ID
 - File path
 - 1-2 sentence summary of task intent
 - Any open assumptions requiring confirmation
+
+If sync is not automatic in this project, remind the user to run:
+
+- \`syntra sync\`
 
 `;

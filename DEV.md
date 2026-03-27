@@ -47,10 +47,12 @@ npm run test:watch
 Current tests cover:
 
 - sync generation and target-specific sync behavior
+- skills included in adapter sync (canonical data loading)
 - done command task movement
 - validation outcomes for valid/invalid setups
 - template save/list behavior
 - sync status warning logic
+- template render safety (all registered templates rendered)
 
 ## 4) Lint and type checks
 
@@ -68,8 +70,15 @@ Use a temporary workspace to avoid modifying real projects:
 ```bash
 mkdir -p /tmp/syntra-smoke && cd /tmp/syntra-smoke
 node /path/to/syntra/dist/index.js init
+# syntra-task skill is auto-created at ai/skills/syntra-task.skill.md (used via /task, alias /syntra-task)
+# verify it exists:
+cat ai/skills/syntra-task.skill.md
 node /path/to/syntra/dist/index.js add task
 node /path/to/syntra/dist/index.js sync
+# verify skill is synced to selected adapters, e.g.:
+cat .github/prompts/syntra-task.prompt.md
+cat .github/prompts/task.prompt.md
+cat .claude/commands/task.md
 node /path/to/syntra/dist/index.js validate
 ```
 
@@ -79,7 +88,7 @@ node /path/to/syntra/dist/index.js validate
 src/
 ├── commands/     # CLI command handlers
 ├── detectors/    # project auto-detection
-├── adapters/     # generators for Copilot/Claude/Cursor
+├── adapters/     # generators for Copilot/Claude/Cursor (instructions, agents, skills)
 ├── templates/    # built-in template content + renderer
 ├── validators/   # config/content/sync checks
 └── utils/        # fs/logger/prompt helpers
@@ -87,6 +96,7 @@ src/
 tests/
 ├── commands/
 ├── validators/
+├── templates/
 └── helpers/
 ```
 
@@ -103,6 +113,9 @@ tests/
 2. `npm run lint`
 3. `npm run build`
 4. `npm test`
-5. Update `README.md` and `DEV.md` when command behavior changes.
+5. Bump version in `package.json`
+6. Update `RELEASE_NOTES.md` with the new version entry
+7. Update `README.md` "What's New" section
+8. Update `llms.txt` version field if needed
 
 If all pass, changes are ready for review.

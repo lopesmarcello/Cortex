@@ -79,7 +79,7 @@ src/
 ├── docs/             # Documentation
 └── README.md
 \`\`\`
-{{/else}}
+{{/if-includes}}
 
 ## Module Organization
 - **Single Responsibility**: Each file/module has one clear purpose
@@ -133,7 +133,7 @@ Separate each group with a blank line (enforced by isort).
 - Never swallow errors silently; always log or re-throw
 - Use custom error classes for domain-specific errors
 - External calls: wrap in try/catch with meaningful context
-{{/else}}
+{{/if-includes}}
 
 ## Dependencies
 - Do not install new dependencies without explicit approval

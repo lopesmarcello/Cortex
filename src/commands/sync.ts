@@ -7,6 +7,7 @@ export interface SyncCommandOptions {
     copilot?: boolean;
     claude?: boolean;
     cursor?: boolean;
+    tasksOnly?: boolean;
     silent?: boolean;
 }
 
@@ -27,8 +28,11 @@ export function syncCommand(rootPath: string = process.cwd(), options: SyncComma
                 copilot: options.copilot === true,
                 claude: options.claude === true,
                 cursor: options.cursor === true,
+                tasksOnly: options.tasksOnly === true,
             }
-            : {},
+            : {
+                tasksOnly: options.tasksOnly === true,
+            },
     );
 
     if (result.targets.length > 0) {
@@ -39,6 +43,10 @@ export function syncCommand(rootPath: string = process.cwd(), options: SyncComma
         if (result.targets.length === 0) {
             logger.warn('No adapters enabled to sync.');
             return;
+        }
+
+        if (options.tasksOnly) {
+            logger.info('Tasks-only mode enabled: syncing active task artifacts only.');
         }
 
         logger.success(`Synced adapters: ${result.targets.join(', ')}`);

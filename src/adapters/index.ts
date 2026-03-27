@@ -7,6 +7,7 @@ export interface SyncOptions {
     copilot?: boolean;
     claude?: boolean;
     cursor?: boolean;
+    tasksOnly?: boolean;
 }
 
 export interface SyncResult {
@@ -23,19 +24,19 @@ export function syncAdapters(rootPath: string, config: Config, options: SyncOpti
     const writtenFiles: string[] = [];
 
     if (shouldSyncCopilot) {
-        const result = syncCopilotAdapter(rootPath, config.tasks?.activeDir ?? 'active');
+        const result = syncCopilotAdapter(rootPath, config.tasks?.activeDir ?? 'active', options.tasksOnly ?? false);
         targets.push('copilot');
         writtenFiles.push(...result.writtenFiles);
     }
 
     if (shouldSyncClaude) {
-        const result = syncClaudeAdapter(rootPath);
+        const result = syncClaudeAdapter(rootPath, config.tasks?.activeDir ?? 'active', options.tasksOnly ?? false);
         targets.push('claude');
         writtenFiles.push(...result.writtenFiles);
     }
 
     if (shouldSyncCursor) {
-        const result = syncCursorAdapter(rootPath);
+        const result = syncCursorAdapter(rootPath, config.tasks?.activeDir ?? 'active', options.tasksOnly ?? false);
         targets.push('cursor');
         writtenFiles.push(...result.writtenFiles);
     }
