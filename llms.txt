@@ -9,7 +9,7 @@
 ## Project Metadata
 
 - **Package name**: syntra
-- **Version**: 0.2.0
+- **Version**: 0.2.8
 - **Language**: TypeScript (ESM, Node.js >=18)
 - **Entry point**: `src/index.ts` → compiled to `dist/index.js`
 - **License**: MIT
@@ -101,14 +101,14 @@ tests/
 ## CLI Commands
 
 ### `syntra init`
-Interactive setup wizard. Auto-detects language, framework, package manager, and CI. Prompts for instruction templates, agents, and adapter targets. Creates `ai/` structure and runs initial sync.
+Interactive setup wizard. Auto-detects language, framework, package manager, and CI. Prompts for instruction templates, agents, and adapter targets. Creates `ai/` structure, auto-creates `ai/skills/syntra-task.skill.md` (used via `/task`, alias `/syntra-task`), and runs initial sync (including skills).
 
 ### `syntra add <type> [name]`
 Adds a framework file from a built-in template. Valid types:
 - `instruction` — adds an `*.instructions.md` to `ai/instructions/`
 - `agent` — adds an `*.agent.md` to `ai/agents/`
 - `task` — interactive task creation in `ai/tasks/active/`
-- `skill` — adds a `*.skill.md` to `ai/skills/`
+- `skill` — adds a `*.skill.md` to `ai/skills/` (use `syntra add skill syntra-task` to add the built-in task-creation skill to an existing project)
 
 If `sync.autoSync: true` in `ai/config.yml`, add operations trigger a silent adapter sync.
 
@@ -116,12 +116,12 @@ If `sync.autoSync: true` in `ai/config.yml`, add operations trigger a silent ada
 Moves `ai/tasks/active/<taskId>.task.md` to `ai/tasks/done/`. Task ID prefix and directory names are configurable in `ai/config.yml`.
 
 ### `syntra sync [--copilot] [--claude] [--cursor]`
-Reads all files in `ai/` and regenerates adapter-specific files. Without flags, syncs all enabled adapters. With a flag, syncs only that adapter.
+Reads all files in `ai/` (instructions, agents, tasks, **skills**) and regenerates adapter-specific files. Without flags, syncs all enabled adapters. With a flag, syncs only that adapter.
 
 Generated outputs:
-- **Copilot**: `.github/copilot-instructions.md` + `.github/agents/*.md`
-- **Claude**: `.claude/CLAUDE.md`
-- **Cursor**: `.cursor/rules/*.mdc`
+- **Copilot**: `.github/copilot-instructions.md` + `.github/agents/*.md` + `.github/prompts/*.prompt.md` (tasks and skills)
+- **Claude**: `.claude/CLAUDE.md` (instructions, agents, and skills under a `## Skills` section)
+- **Cursor**: `.cursor/rules/*.mdc` (instructions, agents, and skills)
 
 ### `syntra validate`
 Validates the full framework for correctness. Checks:
@@ -158,11 +158,11 @@ Task files must live at `ai/tasks/{activeDir}/{taskId}.task.md` and contain all 
 ## Typical Development Workflow
 
 ```bash
-syntra init                                         # 1. Initialize
+syntra init                                         # 1. Initialize (syntra-task skill auto-created)
 $EDITOR ai/instructions/architecture.instructions.md  # 2. Customize instructions
 syntra add task                                     # 3. Create a task
 syntra sync                                         # 4. Regenerate adapters
-# Use your AI tool to execute the task (e.g. /TASK-001)
+# Use your AI tool to execute the task (e.g. /task add login page, alias /syntra-task add login page)
 syntra done TASK-001                                # 5. Mark complete
 syntra validate                                     # 6. Verify framework health
 ```
@@ -177,4 +177,4 @@ npm test                  # run vitest test suite
 npm run lint              # ESLint over src/
 ```
 
-Test coverage includes: sync generation, done command, validation outcomes, template save/list, sync status warnings.
+Test coverage includes: sync generation, done command, validation outcomes, template save/list, sync status warnings, skill canonical data loading, template render safety.

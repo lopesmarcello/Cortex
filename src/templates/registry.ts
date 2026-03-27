@@ -12,7 +12,7 @@ import {
   taskPlannerTemplate,
   bugFixerTemplate,
 } from './agents/index.js';
-import { taskTemplate, skillTemplate } from './files/index.js';
+import { taskTemplate, skillTemplate, syntraTaskSkillTemplate } from './files/index.js';
 
 type TemplateType = 'instruction' | 'agent' | 'task' | 'skill';
 
@@ -124,6 +124,15 @@ const templates: Map<string, TemplateEntry> = new Map([
       name: 'skill',
       template: skillTemplate,
       description: 'Reusable skill with trigger conditions, process, and constraints',
+    },
+  ],
+  [
+    'syntra-task',
+    {
+      type: 'skill',
+      name: 'syntra-task',
+      template: syntraTaskSkillTemplate,
+      description: 'Creates Syntra task files from /syntra-task brief descriptions',
     },
   ],
 ]);

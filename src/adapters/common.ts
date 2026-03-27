@@ -5,6 +5,7 @@ export interface CanonicalData {
     instructions: Array<{ name: string; content: string }>;
     agents: Array<{ name: string; content: string }>;
     tasks: Array<{ name: string; content: string }>;
+    skills: Array<{ name: string; content: string }>;
 }
 
 export function loadCanonicalData(rootPath: string, activeTaskDir: string = 'active'): CanonicalData {
@@ -46,7 +47,19 @@ export function loadCanonicalData(rootPath: string, activeTaskDir: string = 'act
             };
         });
 
-    return { instructions, agents, tasks };
+    const skillsDir = path.join(aiPath, 'skills');
+    const skills = fsUtils
+        .listFiles(skillsDir, '.skill.md')
+        .sort((a, b) => a.localeCompare(b))
+        .map((filePath) => {
+            const base = path.basename(filePath, '.skill.md');
+            return {
+                name: base,
+                content: fsUtils.readFile(filePath).trim(),
+            };
+        });
+
+    return { instructions, agents, tasks, skills };
 }
 
 export function withGeneratedBanner(content: string): string {

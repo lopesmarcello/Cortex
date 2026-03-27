@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import fs from 'fs';
 import { addCommand } from '../../src/commands/add.js';
 import { doneCommand } from '../../src/commands/done.js';
 import { createWorkspace, fileExists, writeConfig, writeFile } from '../helpers/workspace.js';
@@ -61,5 +62,74 @@ describe('addCommand task flow', () => {
 
         expect(fileExists(ws.root, 'ai/tasks/in-progress/TASK-001.task.md')).toBe(false);
         expect(fileExists(ws.root, 'ai/tasks/completed/TASK-001.task.md')).toBe(true);
+    });
+});
+
+describe('addCommand skill flow', () => {
+    it('uses built-in syntra-task template when requested by name', async () => {
+        vi.spyOn(console, 'log').mockImplementation(() => undefined);
+
+        const ws = createWorkspace('syntra-add-skill-built-in-');
+        cleanups.push(ws.cleanup);
+
+        writeConfig(ws.root, {
+            copilot: false,
+            claude: false,
+            cursor: false,
+        });
+
+        await addCommand('skill', 'syntra-task', ws.root);
+
+        const filePath = 'ai/skills/syntra-task.skill.md';
+        expect(fileExists(ws.root, filePath)).toBe(true);
+        const content = await fs.promises.readFile(`${ws.root}/${filePath}`, 'utf8');
+
+        expect(content).toContain('name: syntra-task');
+        expect(content).toContain('/syntra-task {brief description}');
+        expect(content).toContain('Syntra Task model');
+    });
+
+    it('falls back to generic skill template for custom names', async () => {
+        vi.spyOn(console, 'log').mockImplementation(() => undefined);
+
+        const ws = createWorkspace('syntra-add-skill-generic-');
+        cleanups.push(ws.cleanup);
+
+        writeConfig(ws.root, {
+            copilot: false,
+            claude: false,
+            cursor: false,
+        });
+
+        await addCommand('skill', 'custom-skill', ws.root);
+
+        const filePath = 'ai/skills/custom-skill.skill.md';
+        expect(fileExists(ws.root, filePath)).toBe(true);
+        const content = await fs.promises.readFile(`${ws.root}/${filePath}`, 'utf8');
+
+        expect(content).toContain('# custom-skill');
+        expect(content).toContain('## Purpose');
+    });
+
+    it('normalizes slash-prefixed skill names from command-style input', async () => {
+        vi.spyOn(console, 'log').mockImplementation(() => undefined);
+
+        const ws = createWorkspace('syntra-add-skill-slash-prefix-');
+        cleanups.push(ws.cleanup);
+
+        writeConfig(ws.root, {
+            copilot: false,
+            claude: false,
+            cursor: false,
+        });
+
+        await addCommand('skill', '/syntra-task', ws.root);
+
+        const filePath = 'ai/skills/syntra-task.skill.md';
+        expect(fileExists(ws.root, filePath)).toBe(true);
+        const content = await fs.promises.readFile(`${ws.root}/${filePath}`, 'utf8');
+
+        expect(content).toContain('name: syntra-task');
+        expect(content).toContain('/syntra-task {brief description}');
     });
 });
