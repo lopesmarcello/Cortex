@@ -41,6 +41,7 @@ program
             }
             await addCommand(type as any, name);
         } catch (e) {
+            logger.error(`Failed to add ${type}: ${e}`);
             process.exit(1);
         }
     });
