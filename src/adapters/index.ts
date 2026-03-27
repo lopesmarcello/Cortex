@@ -23,7 +23,7 @@ export function syncAdapters(rootPath: string, config: Config, options: SyncOpti
     const writtenFiles: string[] = [];
 
     if (shouldSyncCopilot) {
-        const result = syncCopilotAdapter(rootPath);
+        const result = syncCopilotAdapter(rootPath, config.tasks?.activeDir ?? 'active');
         targets.push('copilot');
         writtenFiles.push(...result.writtenFiles);
     }

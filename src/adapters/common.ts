@@ -4,12 +4,14 @@ import { fsUtils } from '../utils/fs.js';
 export interface CanonicalData {
     instructions: Array<{ name: string; content: string }>;
     agents: Array<{ name: string; content: string }>;
+    tasks: Array<{ name: string; content: string }>;
 }
 
-export function loadCanonicalData(rootPath: string): CanonicalData {
+export function loadCanonicalData(rootPath: string, activeTaskDir: string = 'active'): CanonicalData {
     const aiPath = path.join(rootPath, 'ai');
     const instructionsDir = path.join(aiPath, 'instructions');
     const agentsDir = path.join(aiPath, 'agents');
+    const tasksDir = path.join(aiPath, 'tasks', activeTaskDir);
 
     const instructions = fsUtils
         .listFiles(instructionsDir, '.instructions.md')
@@ -33,7 +35,18 @@ export function loadCanonicalData(rootPath: string): CanonicalData {
             };
         });
 
-    return { instructions, agents };
+    const tasks = fsUtils
+        .listFiles(tasksDir, '.task.md')
+        .sort((a, b) => a.localeCompare(b))
+        .map((filePath) => {
+            const base = path.basename(filePath, '.task.md');
+            return {
+                name: base,
+                content: fsUtils.readFile(filePath).trim(),
+            };
+        });
+
+    return { instructions, agents, tasks };
 }
 
 export function withGeneratedBanner(content: string): string {
