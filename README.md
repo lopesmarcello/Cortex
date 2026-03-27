@@ -97,7 +97,12 @@ syntra add instruction microfrontends
 syntra add agent bug-fixer
 syntra add task
 syntra add skill api-pagination
+syntra add skill syntra-task
 ```
+
+Built-in skill templates can provide richer guided behavior. For example,
+`syntra-task` scaffolds a `/syntra-task {brief}` workflow that asks clarifying
+questions and generates a task file aligned with the Syntra task model.
 
 If `sync.autoSync: true` in `ai/config.yml`, add operations trigger silent adapter sync.
 

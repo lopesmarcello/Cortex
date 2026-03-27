@@ -1,7 +1,7 @@
 import { fsUtils } from '../utils/fs.js';
 import { logger } from '../utils/logger.js';
 import { prompt } from '../utils/prompt.js';
-import { renderTemplate, listTemplates } from '../templates/registry.js';
+import { renderTemplate, listTemplates, hasTemplate } from '../templates/registry.js';
 import { loadConfig } from '../validators/config.js';
 import { syncCommand } from './sync.js';
 import path from 'path';
@@ -194,7 +194,8 @@ async function addSkill(
         skillName: name,
     };
 
-    const content = renderTemplate('skill', templateData);
+    const templateName = hasTemplate(name) ? name : 'skill';
+    const content = renderTemplate(templateName, templateData);
     const filePath = path.join(aiPath, 'skills', `${name}.skill.md`);
 
     fsUtils.writeFile(filePath, content);
