@@ -1,5 +1,12 @@
 # Syntra CLI
 
+[![npm version](https://img.shields.io/npm/v/syntra)](https://www.npmjs.com/package/syntra)
+[![npm downloads](https://img.shields.io/npm/dm/syntra)](https://www.npmjs.com/package/syntra)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Node.js >= 18](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](https://nodejs.org)
+
+**[npmjs.com/package/syntra](https://www.npmjs.com/package/syntra)**
+
 Syntra is a CLI that scaffolds, manages, validates, and syncs an AI-assisted development framework across tools like GitHub Copilot, Claude Code, and Cursor.
 
 Core principle: **`ai/` is the source of truth**. Adapter folders (`.github/`, `.claude/`, `.cursor/`) are generated artifacts.
@@ -8,25 +15,30 @@ Core principle: **`ai/` is the source of truth**. Adapter folders (`.github/`, `
 
 ## What's New
 
+### 0.3.2
+
+- Stability improvements and build fixes.
+- Minor edge-case fixes across sync and validate commands.
+
+### 0.3.1
+
+- Sync state tracking: `syntra sync` now writes `ai/.sync-state.json` after each successful sync.
+- `syntra validate` uses sync state to compare canonical file modification times against the last sync timestamp, warning when `ai/` files have been changed without re-syncing.
+- Sync freshness check correctly handles missing state (first-run projects are not penalized).
+
+### 0.3.0
+
+- **Claude slash commands**: skills are now also written to `.claude/commands/*.md` as native Claude Code slash commands (e.g. `/syntra-task`, `/task`).
+- The `syntra-task` skill auto-creates both `syntra-task.md` and `task.md` in `.claude/commands/`, so both `/syntra-task` and `/task` work out of the box.
+- `CLAUDE.md` continues to be generated for full instruction and agent context.
+
 ### 0.2.9
 
 - Added `syntra sync --tasks-only` to refresh active task adapter artifacts without regenerating instruction/agent/skill artifacts where supported.
 - Task sync is now included across all adapters:
-	- Copilot tasks -> `.github/prompts/*.prompt.md`
-	- Claude tasks -> `## Active Tasks` section in `.claude/CLAUDE.md`
-	- Cursor tasks -> `.cursor/rules/*.mdc`
-
-### 0.2.8
-
-- `syntra init` now auto-creates `ai/skills/syntra-task.skill.md` based on the LLM adapter you select — no manual step needed.
-- Skills are now included in adapter sync for all targets: Copilot (`.github/prompts/`), Claude (`.claude/CLAUDE.md`), Cursor (`.cursor/rules/`).
-- Workflow simplified: `npx syntra init` is now sufficient to get task creation commands ready in your AI tool (`/task` preferred, `/syntra-task` alias).
-
-### 0.2.7
-
-- Fixed `syntra init` template rendering failure caused by malformed Handlebars block closures in the architecture template.
-- Added regression coverage to render all registered templates and fail fast on parser issues (`tests/templates/render.test.ts`).
-- Added built-in **`syntra-task`** skill template to scaffold a `/task {brief}` workflow (with `/syntra-task` alias) for creating valid Syntra task files.
+	- Copilot tasks → `.github/prompts/*.prompt.md`
+	- Claude tasks → `## Active Tasks` section in `.claude/CLAUDE.md`
+	- Cursor tasks → `.cursor/rules/*.mdc`
 
 ---
 
@@ -58,10 +70,11 @@ node dist/index.js --help
 
 After `syntra init`, the framework is structured like this:
 
-```text
+```
 project-root/
 ├── ai/
 │   ├── config.yml
+│   ├── .sync-state.json       # written by syntra sync
 │   ├── instructions/
 │   │   ├── architecture.instructions.md
 │   │   ├── style.instructions.md
@@ -77,8 +90,20 @@ project-root/
 │       └── done/
 │
 ├── .github/
+│   ├── copilot-instructions.md
+│   ├── agents/
+│   │   └── *.md
+│   └── prompts/
+│       └── *.prompt.md
+│
 ├── .claude/
+│   ├── CLAUDE.md
+│   └── commands/
+│       └── *.md               # skills as slash commands
+│
 └── .cursor/
+    └── rules/
+        └── *.mdc
 ```
 
 You edit files in `ai/`, then run `syntra sync` to regenerate adapters.
@@ -159,9 +184,11 @@ This skill is synced to your adapter automatically by `syntra sync`. It is desig
 
 - `/task {brief}` (alias: `/syntra-task {brief}`)
 
+**Claude Code** users get both `/task` and `/syntra-task` available as native slash commands via `.claude/commands/`.
+
 Example:
 
-```text
+```
 /task add role-based authorization checks to project routes
 ```
 
@@ -181,7 +208,7 @@ syntra done TASK-001
 
 ## `syntra sync`
 
-Generates tool-specific adapter files from canonical `ai/` files.
+Generates tool-specific adapter files from canonical `ai/` files. Writes `ai/.sync-state.json` after each successful sync.
 
 ```bash
 syntra sync
@@ -205,9 +232,11 @@ syntra sync --claude --tasks-only
 
 What gets generated:
 
-- Copilot: `.github/copilot-instructions.md`, `.github/agents/*.md`, `.github/prompts/*.prompt.md` (tasks + skills)
-- Claude: `.claude/CLAUDE.md` (instructions, agents, skills, and active tasks)
-- Cursor: `.cursor/rules/*.mdc` (instructions, agents, skills, and active tasks)
+| Adapter | Output |
+|---|---|
+| Copilot | `.github/copilot-instructions.md`, `.github/agents/*.md`, `.github/prompts/*.prompt.md` |
+| Claude | `.claude/CLAUDE.md` (instructions + agents + skills + tasks), `.claude/commands/*.md` (skills as slash commands) |
+| Cursor | `.cursor/rules/*.mdc` (instructions, agents, skills, and active tasks) |
 
 ---
 
@@ -221,7 +250,7 @@ Checks include:
 - instruction naming/format
 - agent references to instructions
 - task structure and references (requires `Context`, `References`, `Dependencies`, `Steps`, `Acceptance Criteria`, `Notes`)
-- sync freshness/manual edit risk signals
+- sync freshness: warns when `ai/` files were modified after the last recorded sync
 
 ```bash
 syntra validate
@@ -243,9 +272,9 @@ syntra template save my-team-template
 syntra template list
 ```
 
-Saved templates are currently stored in:
+Saved templates are stored in:
 
-```text
+```
 ~/.syntra/templates/
 ```
 
@@ -287,6 +316,20 @@ Typical sections:
 - `task` (task file scaffold)
 - `skill` (generic skill scaffold)
 - `syntra-task` (specialized skill for task creation workflows)
+
+---
+
+## Project Detection
+
+`syntra init` auto-detects your project profile before prompting:
+
+| Property | Detected values |
+|---|---|
+| Language | `typescript`, `javascript`, `python`, `go`, `rust`, `other` |
+| Framework | `next.js`, `nuxt`, `angular`, `vite`, `react`, `vue`, `nestjs`, `express`, `django`, `fastapi`, `flask`, `starlette`, `unknown` |
+| Package manager | `npm`, `yarn`, `pnpm`, `bun` |
+| Monorepo | detected via workspace config |
+| CI/CD | GitHub Actions, GitLab CI, CircleCI, and others |
 
 ---
 
@@ -348,7 +391,7 @@ $EDITOR ai/instructions/architecture.instructions.md
 syntra sync
 
 # 5) Execute the generated task with your coding agent
-# then execute the generated task id (e.g. /TASK-001)
+# (e.g. /TASK-001)
 
 # 6) Mark done
 syntra done TASK-001
@@ -375,15 +418,78 @@ npm test -- tests/templates/render.test.ts
 
 ---
 
-## Status and Roadmap
+## Upcoming Features
 
-Implemented:
+- **Language template improvements**: richer instruction and agent templates tailored for TypeScript, Python, and Rust projects; additional language support beyond the current detection set
+- **Better LLM and agent compatibility**: improved adapter output structure for broader LLM compatibility; support for additional AI tools and agent runtimes beyond Copilot, Claude, and Cursor
 
-- Phase 1 (init/add/done + templates + config)
-- Phase 2 (adapter sync)
-- Phase 3 core (validate + template save/list)
-- Built-in `syntra-task` skill, auto-created on `syntra init`
-- Skills included in adapter sync (Copilot prompts, Claude context, Cursor rules)
-- Template render regression test coverage for parser safety
+---
 
-Planned next enhancements include additional template workflows and richer validation/polish.
+## Changelog
+
+### 0.3.2 — 2026-03-27
+
+#### Fixed
+- Stability improvements and build fixes.
+- Minor edge-case fixes across sync and validate commands.
+
+---
+
+### 0.3.1 — 2026-03-27
+
+#### Added
+- `syntra sync` now writes `ai/.sync-state.json` after each successful sync run, recording the timestamp of the last sync.
+- `syntra validate` reads sync state and compares canonical file modification times against the last sync timestamp, warning when `ai/` files have changed since the last sync.
+- Sync freshness check is gracefully skipped on first-run projects with no prior sync state.
+
+---
+
+### 0.3.0 — 2026-03-27
+
+#### Added
+- **Claude slash commands**: skills are now written to `.claude/commands/*.md` in addition to `CLAUDE.md`, enabling native slash command access in Claude Code.
+- The `syntra-task` skill auto-creates both `.claude/commands/syntra-task.md` and `.claude/commands/task.md`, making both `/syntra-task` and `/task` available without extra configuration.
+
+#### Changed
+- Claude adapter output now includes both `CLAUDE.md` (full context file) and `.claude/commands/` (skills as slash commands).
+
+---
+
+### 0.2.9 — 2026-03-27
+
+#### Added
+- `syntra sync --tasks-only` to refresh active task artifacts without regenerating non-task adapter artifacts.
+
+#### Changed
+- Task sync now covers all adapters:
+  - **Copilot**: active tasks synced to `.github/prompts/*.prompt.md`
+  - **Claude**: active tasks included in `.claude/CLAUDE.md` under a managed `## Active Tasks` section
+  - **Cursor**: active tasks synced to `.cursor/rules/*.mdc`
+
+#### Notes
+- In `--tasks-only` mode, Claude updates its managed task block in place when available and falls back to full `CLAUDE.md` generation when no managed block is present.
+
+---
+
+### 0.2.8 — 2026-03-27
+
+#### Added
+- `syntra init` now automatically creates `ai/skills/syntra-task.skill.md` based on the LLM adapter selected — no separate `syntra add skill syntra-task` step required.
+- Skills are now included in adapter sync for all three targets:
+  - **Copilot**: skills synced as `.github/prompts/*.prompt.md`
+  - **Claude**: skills included in `.claude/CLAUDE.md` under a `## Skills` section
+  - **Cursor**: skills synced as `.cursor/rules/*.mdc`
+
+#### Changed
+- `syntra init` workflow simplified: initializing a project now produces ready-to-use task commands for the chosen AI tool (`/task` preferred, `/syntra-task` alias) without manual configuration.
+
+---
+
+### 0.2.7 — 2026-03-27
+
+#### Fixed
+- Resolved a template parsing failure during `syntra init` caused by malformed Handlebars block closures in the `architecture` instruction template.
+- `next.js` TypeScript projects now initialize successfully with all instruction templates selected.
+
+#### Quality
+- Added a regression test that renders all registered templates and fails on Handlebars parser errors (`tests/templates/render.test.ts`).
